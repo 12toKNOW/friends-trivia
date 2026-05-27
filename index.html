@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Friends Trivia Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Fredoka:wght@400;500;600;700&family=Source+Serif+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f4ece0;
+    --cream-2: #ebe2d2;
+    --ink: #2a2a2a;
+    --red: #ef3e42;
+    --blue: #2a7ed5;
+    --yellow: #f5c518;
+    --teal: #4cb5ab;
+    --purple: #a64ca6;
+    --green: #6dbe45;
+    --shadow: rgba(42, 42, 42, 0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Fredoka', sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(42, 126, 213, 0.06) 0, transparent 38%),
+      radial-gradient(circle at 88% 92%, rgba(239, 62, 66, 0.06) 0, transparent 42%),
+      radial-gradient(circle at 50% 50%, rgba(245, 197, 24, 0.04) 0, transparent 60%);
+    padding: 32px 16px 64px;
+  }
+
+  .stage {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  /* ───────────── HEADER ───────────── */
+  header.hero {
+    text-align: center;
+    padding: 16px 0 36px;
+    position: relative;
+  }
+
+  /* Dot pattern divider, evoking the title-card */
+  .dots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .dots span {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dots span:nth-child(1) { background: var(--red); }
+  .dots span:nth-child(2) { background: var(--blue); }
+  .dots span:nth-child(3) { background: var(--yellow); }
+  .dots span:nth-child(4) { background: var(--teal); }
+  .dots span:nth-child(5) { background: var(--purple); }
+
+  .kicker {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.4em;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--ink);
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+  h1 {
+    font-family: 'Permanent Marker', cursive;
+    font-size: clamp(2.6rem, 8vw, 4.2rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin: 0 0 6px;
+    transform: rotate(-1.5deg);
+  }
+  h1 .dot {
+    display: inline-block;
+    width: 0.45em; height: 0.45em;
+    background: var(--red);
+    border-radius: 50%;
+    margin: 0 0.05em 0.12em;
+    vertical-align: middle;
+  }
+  h1 .dot.blue { background: var(--blue); }
+  h1 .dot.yellow { background: var(--yellow); }
+  h1 .dot.teal { background: var(--teal); }
+  .subtitle {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 18px;
+    color: var(--blue);
+    margin-top: 8px;
+    transform: rotate(-0.5deg);
+    display: inline-block;
+  }
+  .tagline {
+    font-family: 'Source Serif Pro', Georgia, serif;
+    font-style: italic;
+    font-size: 16px;
+    opacity: 0.8;
+    max-width: 540px;
+    margin: 18px auto 0;
+  }
+
+  /* ───────────── SCORE BAR ───────────── */
+  .scorebar {
+    background: white;
+    color: var(--ink);
+    border: 2.5px solid var(--ink);
+    border-radius: 12px;
+    padding: 14px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    box-shadow: 4px 4px 0 var(--ink);
+    position: sticky;
+    top: 8px;
+    z-index: 30;
+  }
+  .scorebar .meta {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .scorebar .points {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 24px;
+    color: var(--red);
+  }
+  .progress {
+    flex: 1 0 100%;
+    height: 7px;
+    background: var(--cream-2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress > span {
+    display: block; height: 100%;
+    background: linear-gradient(90deg, var(--red), var(--yellow), var(--blue));
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  /* ───────────── INTRO PANEL ───────────── */
+  .intro {
+    background: white;
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    padding: 28px 28px 24px;
+    margin-bottom: 28px;
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .intro h2 {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 26px;
+    margin-bottom: 14px;
+    color: var(--ink);
+    transform: rotate(-0.5deg);
+    display: inline-block;
+  }
+  .intro p {
+    font-family: 'Source Serif Pro', Georgia, serif;
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+  .rules {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 22px 0;
+  }
+  .rule {
+    background: var(--cream);
+    border: 2px solid var(--ink);
+    padding: 14px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .rule .pts {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 32px;
+    display: block;
+    margin-bottom: 2px;
+    line-height: 1;
+  }
+  .rule.easy .pts { color: var(--teal); }
+  .rule.medium .pts { color: var(--yellow); -webkit-text-stroke: 1.5px var(--ink); }
+  .rule.hard .pts { color: var(--red); }
+  .rule .label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  @media (max-width: 480px) {
+    .rules { grid-template-columns: 1fr; }
+  }
+
+  .start-btn, .restart-btn {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 22px;
+    background: var(--red);
+    color: white;
+    border: 2.5px solid var(--ink);
+    padding: 14px 36px;
+    cursor: pointer;
+    border-radius: 100px;
+    box-shadow: 5px 5px 0 var(--ink);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    transform: rotate(-1deg);
+  }
+  .start-btn:hover, .restart-btn:hover {
+    transform: rotate(-1deg) translate(-2px, -2px);
+    box-shadow: 7px 7px 0 var(--ink);
+  }
+  .start-btn:active, .restart-btn:active {
+    transform: rotate(-1deg) translate(2px, 2px);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+
+  /* ───────────── QUESTION CARD ───────────── */
+  .quiz-area { display: none; }
+  .quiz-area.active { display: block; }
+
+  .qcard {
+    background: white;
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: 6px 6px 0 var(--ink);
+    position: relative;
+  }
+  .qcard .qheader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 2px dotted var(--ink);
+  }
+  .qnum {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 18px;
+    color: var(--blue);
+  }
+  .pill {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 6px 12px;
+    border: 2px solid var(--ink);
+    border-radius: 100px;
+  }
+  .pill.easy { background: var(--teal); color: white; }
+  .pill.medium { background: var(--yellow); color: var(--ink); }
+  .pill.hard { background: var(--red); color: white; }
+
+  .qtext {
+    font-family: 'Source Serif Pro', Georgia, serif;
+    font-size: 21px;
+    line-height: 1.4;
+    margin-bottom: 22px;
+    font-weight: 600;
+  }
+
+  .choices {
+    display: grid;
+    gap: 10px;
+  }
+  .choice {
+    background: var(--cream);
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 14px 18px;
+    cursor: pointer;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 16px;
+    text-align: left;
+    transition: transform 0.08s ease, background 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--ink);
+  }
+  .choice:hover:not(.locked) {
+    background: var(--yellow);
+    transform: translateX(4px);
+  }
+  .choice .marker {
+    font-family: 'Permanent Marker', cursive;
+    background: var(--ink);
+    color: var(--cream);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .choice.correct {
+    background: var(--teal);
+    color: white;
+  }
+  .choice.correct .marker { background: white; color: var(--teal); }
+  .choice.incorrect {
+    background: var(--red);
+    color: white;
+  }
+  .choice.incorrect .marker { background: white; color: var(--red); }
+  .choice.locked { cursor: default; }
+  .choice.faded { opacity: 0.4; }
+
+  .feedback {
+    margin-top: 20px;
+    padding: 16px 18px;
+    background: var(--cream);
+    border-left: 5px solid var(--ink);
+    border-radius: 4px;
+    font-family: 'Source Serif Pro', Georgia, serif;
+    font-size: 15px;
+    display: none;
+  }
+  .feedback.shown { display: block; }
+  .feedback .src {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    margin-top: 8px;
+    opacity: 0.8;
+    letter-spacing: 0.02em;
+  }
+  .feedback .verdict {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+  .feedback .verdict.yes { color: var(--teal); }
+  .feedback .verdict.no { color: var(--red); }
+
+  .nav {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+  .next-btn {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 18px;
+    background: var(--blue);
+    color: white;
+    border: 2px solid var(--ink);
+    padding: 10px 24px;
+    cursor: pointer;
+    border-radius: 100px;
+    box-shadow: 3px 3px 0 var(--ink);
+    display: none;
+    transition: transform 0.08s ease;
+  }
+  .next-btn.shown { display: inline-block; }
+  .next-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+
+  /* ───────────── RESULTS ───────────── */
+  .results {
+    display: none;
+    text-align: center;
+    background: white;
+    border: 2.5px solid var(--ink);
+    padding: 36px 28px;
+    border-radius: 14px;
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .results.active { display: block; }
+  .results .verdict-title {
+    font-family: 'Permanent Marker', cursive;
+    font-size: clamp(2.2rem, 6vw, 3.2rem);
+    color: var(--ink);
+    margin-bottom: 12px;
+    transform: rotate(-1deg);
+    display: inline-block;
+  }
+  .results .verdict-rank {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    color: var(--blue);
+  }
+  .scorebox {
+    display: inline-block;
+    border: 2.5px solid var(--ink);
+    padding: 18px 36px;
+    margin: 12px auto 18px;
+    background: var(--cream);
+    border-radius: 10px;
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .scorebox .big {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 68px;
+    line-height: 1;
+    color: var(--red);
+  }
+  .scorebox .out-of {
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.7;
+    letter-spacing: 0.1em;
+  }
+  .results p.blurb {
+    font-family: 'Source Serif Pro', Georgia, serif;
+    font-style: italic;
+    max-width: 480px;
+    margin: 0 auto 8px;
+  }
+  .breakdown {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-width: 480px;
+    margin: 24px auto;
+  }
+  .breakdown div {
+    background: var(--cream);
+    border: 2px solid var(--ink);
+    padding: 12px;
+    border-radius: 10px;
+  }
+  .breakdown div strong { display: block; font-family: 'Permanent Marker', cursive; font-size: 22px; color: var(--blue); }
+  .breakdown div span { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.7; }
+  @media (max-width: 480px) { .breakdown { grid-template-columns: 1fr; } }
+
+  /* ───────────── FOOTER ───────────── */
+  footer {
+    text-align: center;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 2px dotted var(--ink);
+    font-family: 'Fredoka', sans-serif;
+    font-size: 13px;
+    opacity: 0.75;
+  }
+  footer a { color: var(--blue); text-decoration: none; border-bottom: 1.5px solid var(--blue); font-weight: 600; }
+  footer a:hover { background: var(--yellow); }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <header class="hero">
+    <div class="dots">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="kicker">A Trivia Challenge About</div>
+    <h1>F<span class="dot"></span>R<span class="dot blue"></span>I<span class="dot yellow"></span>E<span class="dot teal"></span>N<span class="dot"></span>D<span class="dot blue"></span>S</h1>
+    <div class="subtitle">— So no one told you trivia was gonna be this way? —</div>
+    <p class="tagline">Sixty-five questions across ten seasons. Are you a true fan… or have you just seen the pivot scene?</p>
+  </header>
+
+  <!-- INTRO -->
+  <section class="intro" id="intro">
+    <h2>How it works</h2>
+    <p>You'll face 65 multiple-choice questions sorted by difficulty. Points are awarded based on how tough each one is. After every answer, you'll see the correct response and the episode it's drawn from — perfect for the diehard rewatch crowd and casual fans alike.</p>
+    <div class="rules">
+      <div class="rule easy"><span class="pts">1</span><span class="label">Easy — 20 questions</span></div>
+      <div class="rule medium"><span class="pts">3</span><span class="label">Medium — 25 questions</span></div>
+      <div class="rule hard"><span class="pts">5</span><span class="label">Hard — 20 questions</span></div>
+    </div>
+    <p style="text-align:center; margin-top:24px;">
+      <button class="start-btn" id="startBtn">Let's Go!</button>
+    </p>
+  </section>
+
+  <!-- SCORE BAR (hidden until quiz starts) -->
+  <div class="scorebar" id="scorebar" style="display:none;">
+    <div class="meta">Question <span id="qNum">1</span> / <span id="qTotal">65</span></div>
+    <div class="meta">Score: <span class="points" id="scoreNow">0</span> / <span id="scoreMax">0</span></div>
+    <div class="progress"><span id="progressBar"></span></div>
+  </div>
+
+  <!-- QUIZ -->
+  <section class="quiz-area" id="quizArea">
+    <div class="qcard" id="qcard">
+      <div class="qheader">
+        <div class="qnum" id="qLabel">Question 1</div>
+        <div class="pill easy" id="qPill">Easy · 1 pt</div>
+      </div>
+      <div class="qtext" id="qText">Loading…</div>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback">
+        <div class="verdict" id="verdict"></div>
+        <div id="feedbackBody"></div>
+        <div class="src" id="srcLine"></div>
+      </div>
+      <div class="nav">
+        <button class="next-btn" id="nextBtn">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="results" id="results">
+    <div class="verdict-title" id="resultTitle">Could this BE any better?</div>
+    <div class="verdict-rank" id="resultRank">— Verdict pending —</div>
+    <div class="scorebox">
+      <div class="big" id="finalScore">0</div>
+      <div class="out-of">out of <span id="finalMax">0</span></div>
+    </div>
+    <p class="blurb" id="resultBlurb"></p>
+    <div class="breakdown" id="breakdown"></div>
+    <button class="restart-btn" id="restartBtn">Play Again</button>
+  </section>
+
+  <footer>
+    <p>Made for fun · Source document: <a href="SOURCES.md">SOURCES.md</a></p>
+    <p style="margin-top:8px;">No affiliation with Friends, NBC, or Warner Bros. Trivia only — all character names and episode references belong to their respective owners.</p>
+  </footer>
+</div>
+
+<!-- Question bank -->
+<script src="questions.js"></script>
+
+<script>
+  let state = {
+    order: [],
+    idx: 0,
+    score: 0,
+    answers: [],
+    started: false
+  };
+
+  const maxScore = QUESTIONS.reduce((s, q) => s + q.points, 0);
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function buildOrder() {
+    const easy   = shuffle(QUESTIONS.filter(q => q.difficulty === "easy"));
+    const medium = shuffle(QUESTIONS.filter(q => q.difficulty === "medium"));
+    const hard   = shuffle(QUESTIONS.filter(q => q.difficulty === "hard"));
+    return [...easy, ...medium, ...hard];
+  }
+
+  function startQuiz() {
+    state.order = buildOrder();
+    state.idx = 0;
+    state.score = 0;
+    state.answers = [];
+    state.started = true;
+
+    document.getElementById('intro').style.display = 'none';
+    document.getElementById('results').classList.remove('active');
+    document.getElementById('scorebar').style.display = 'flex';
+    document.getElementById('quizArea').classList.add('active');
+    document.getElementById('qTotal').textContent = state.order.length;
+    document.getElementById('scoreMax').textContent = maxScore;
+    document.getElementById('finalMax').textContent = maxScore;
+
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    const q = state.order[state.idx];
+
+    document.getElementById('qNum').textContent = state.idx + 1;
+    document.getElementById('scoreNow').textContent = state.score;
+    document.getElementById('progressBar').style.width = ((state.idx) / state.order.length * 100) + '%';
+
+    document.getElementById('qLabel').textContent = 'Question ' + (state.idx + 1);
+
+    const pill = document.getElementById('qPill');
+    pill.className = 'pill ' + q.difficulty;
+    pill.textContent = q.difficulty.charAt(0).toUpperCase() + q.difficulty.slice(1) + ' · ' + q.points + ' pt' + (q.points > 1 ? 's' : '');
+
+    document.getElementById('qText').textContent = q.q;
+
+    const choicesEl = document.getElementById('choices');
+    choicesEl.innerHTML = '';
+    const labels = ['A', 'B', 'C', 'D'];
+    q.choices.forEach((choice, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'choice';
+      btn.innerHTML = '<span class="marker">' + labels[i] + '</span><span>' + choice + '</span>';
+      btn.addEventListener('click', () => handleAnswer(i, btn));
+      choicesEl.appendChild(btn);
+    });
+
+    document.getElementById('feedback').classList.remove('shown');
+    document.getElementById('nextBtn').classList.remove('shown');
+  }
+
+  function handleAnswer(selectedIdx, btn) {
+    const q = state.order[state.idx];
+    const allChoices = document.querySelectorAll('.choice');
+    const correct = selectedIdx === q.answer;
+
+    allChoices.forEach((c, i) => {
+      c.classList.add('locked');
+      if (i === q.answer) c.classList.add('correct');
+      else if (i === selectedIdx) c.classList.add('incorrect');
+      else c.classList.add('faded');
+    });
+
+    if (correct) state.score += q.points;
+    state.answers.push({ id: q.id, correct: correct, points: correct ? q.points : 0 });
+
+    const fb = document.getElementById('feedback');
+    const verdict = document.getElementById('verdict');
+    const body = document.getElementById('feedbackBody');
+    const src = document.getElementById('srcLine');
+
+    if (correct) {
+      verdict.className = 'verdict yes';
+      verdict.textContent = '✓ Correct! +' + q.points + ' pt' + (q.points > 1 ? 's' : '');
+    } else {
+      verdict.className = 'verdict no';
+      verdict.textContent = '✗ Not quite — the answer is ' + ['A','B','C','D'][q.answer];
+    }
+
+    let bodyText = '';
+    if (q.note) bodyText += q.note + ' ';
+    body.textContent = bodyText.trim();
+
+    src.textContent = 'Source: ' + q.episode;
+
+    fb.classList.add('shown');
+    document.getElementById('scoreNow').textContent = state.score;
+    document.getElementById('nextBtn').classList.add('shown');
+  }
+
+  function nextQuestion() {
+    state.idx++;
+    if (state.idx >= state.order.length) {
+      showResults();
+    } else {
+      renderQuestion();
+      document.getElementById('qcard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function showResults() {
+    document.getElementById('quizArea').classList.remove('active');
+    document.getElementById('results').classList.add('active');
+    document.getElementById('scorebar').style.display = 'none';
+
+    document.getElementById('finalScore').textContent = state.score;
+    const pct = state.score / maxScore;
+
+    const rank = getRank(pct);
+    document.getElementById('resultTitle').textContent = rank.title;
+    document.getElementById('resultRank').textContent = rank.rank;
+    document.getElementById('resultBlurb').textContent = rank.blurb;
+
+    const byDiff = { easy: { right: 0, total: 0 }, medium: { right: 0, total: 0 }, hard: { right: 0, total: 0 } };
+    state.order.forEach((q, i) => {
+      byDiff[q.difficulty].total++;
+      if (state.answers[i] && state.answers[i].correct) byDiff[q.difficulty].right++;
+    });
+    document.getElementById('breakdown').innerHTML =
+      '<div><strong>' + byDiff.easy.right + ' / ' + byDiff.easy.total + '</strong><span>Easy</span></div>' +
+      '<div><strong>' + byDiff.medium.right + ' / ' + byDiff.medium.total + '</strong><span>Medium</span></div>' +
+      '<div><strong>' + byDiff.hard.right + ' / ' + byDiff.hard.total + '</strong><span>Hard</span></div>';
+  }
+
+  function getRank(pct) {
+    if (pct >= 0.95) return { title: "You're our lobster!", rank: 'TIER S · Phoebe-level wisdom', blurb: "Astonishing. You know this show better than Ross knows the difference between a unagi and a salmon skin roll." };
+    if (pct >= 0.80) return { title: "Could you BE any better?", rank: 'TIER A · Chandler-tier sarcasm earned', blurb: "Seriously strong. You belong in the apartment with the gang." };
+    if (pct >= 0.65) return { title: "Pivot!", rank: 'TIER B · Solid fan credentials', blurb: "You know the bits. You may have officially earned a Central Perk couch seat." };
+    if (pct >= 0.50) return { title: "How you doin'?", rank: 'TIER C · A casual rewatcher', blurb: "You've absorbed the highlights. Time for a full rewatch from S1E1." };
+    if (pct >= 0.30) return { title: "Oh. My. God.", rank: 'TIER D · A Janice-level surprise', blurb: "Some big moments are in there, but the deep cuts got away from you." };
+    return { title: "We were on a break!", rank: 'TIER F · Streaming required', blurb: "It happens to the best of us. The good news: 236 episodes await on streaming." };
+  }
+
+  document.getElementById('startBtn').addEventListener('click', startQuiz);
+  document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+  document.getElementById('restartBtn').addEventListener('click', startQuiz);
+</script>
+</body>
+</html>
