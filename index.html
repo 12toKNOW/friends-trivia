@@ -534,8 +534,7 @@
   </section>
 
   <footer>
-    <p>Made for fun · Source document: <a href="SOURCES.md">SOURCES.md</a></p>
-    <p style="margin-top:8px;">No affiliation with Friends, NBC, or Warner Bros. Trivia only — all character names and episode references belong to their respective owners.</p>
+    <p>No affiliation with Friends, NBC, or Warner Bros. Trivia only — all character names and episode references belong to their respective owners.</p>
   </footer>
 </div>
 
@@ -563,10 +562,7 @@
   }
 
   function buildOrder() {
-    const easy   = shuffle(QUESTIONS.filter(q => q.difficulty === "easy"));
-    const medium = shuffle(QUESTIONS.filter(q => q.difficulty === "medium"));
-    const hard   = shuffle(QUESTIONS.filter(q => q.difficulty === "hard"));
-    return [...easy, ...medium, ...hard];
+    return shuffle(QUESTIONS);
   }
 
   function startQuiz() {
